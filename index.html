@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>环保减碳知多少</title>
+<style>
+  :root{
+    --primary:#3b6ef6; --primary-dark:#2f5fe0;
+    --border:#dfe5f2; --text:#1f2a44; --muted:#6b7794;
+    --ok:#18a058; --no:#e0393e;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:linear-gradient(160deg,#eef2fb,#e4ecfb);
+    color:var(--text);
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    padding:20px;
+  }
+  .wrap{width:100%; max-width:900px;}
+  .card{
+    width:100%;
+    background:#fff;
+    border-radius:20px;
+    padding:36px 44px;
+    box-shadow:0 12px 36px rgba(31,42,68,.1);
+  }
+  .hidden{display:none !important;}
+
+  /* ===== 首页：一屏紧凑适配 ===== */
+  .card-start{
+    max-height:calc(100vh - 40px);
+    overflow-y:auto;
+    padding:28px 36px;
+  }
+  h1{
+    font-size:34px;
+    margin:0 0 22px;
+    text-align:center;
+    color:#0f5132;
+    letter-spacing:2px;
+    font-weight:800;
+  }
+  .rules{display:flex; flex-direction:column; gap:12px; margin-bottom:22px;}
+  .rule{
+    background:#eefbf3;
+    border-left:7px solid #18a058;
+    border-radius:12px;
+    padding:14px 18px;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  .rule-label{
+    font-size:18px;
+    font-weight:800;
+    color:#0f7a4a;
+    letter-spacing:1px;
+  }
+  .rule-text{
+    font-size:17px;
+    line-height:1.7;
+    color:#1a2b22;
+    font-weight:500;
+  }
+  .rule-text b{color:#0f7a4a; font-weight:800;}
+
+  /* 注意提示：另起一段，非绿色，全部加粗 */
+  .rule-notice{
+    margin-top:8px;
+    padding-top:8px;
+    border-top:1px dashed #f0c6a8;
+    font-size:17px;
+    line-height:1.7;
+    color:#d9480f;
+    font-weight:800;
+  }
+
+  button{
+    font:inherit;
+    cursor:pointer;
+    border-radius:12px;
+    padding:10px 20px;
+    border:1.5px solid var(--border);
+    background:#fff;
+    color:var(--text);
+    transition:.15s;
+  }
+  button:hover:not(:disabled){border-color:#9db4f5;}
+  button.primary{background:var(--primary); border-color:var(--primary); color:#fff;}
+  button.primary:hover:not(:disabled){background:var(--primary-dark); border-color:var(--primary-dark);}
+  button.block{width:100%; font-weight:800; letter-spacing:2px;}
+  button:disabled{opacity:.45; cursor:not-allowed;}
+
+  #btnStart{
+    padding:16px;
+    font-size:22px;
+  }
+
+  /* ===== 答题页 ===== */
+  .quiz-head{
+    display:flex; justify-content:space-between; align-items:center;
+    font-size:15px; color:var(--muted);
+    margin-bottom:12px; gap:8px;
+  }
+  .quiz-head-right{display:flex; align-items:center; gap:8px; flex:0 0 auto;}
+  .tag{
+    background:#eef3ff; color:var(--primary);
+    padding:3px 12px; border-radius:20px;
+    font-size:13px; white-space:nowrap; font-weight:600;
+  }
+  .timer{
+    background:#f0f6ff; color:var(--primary);
+    border:1px solid #c9d8fa;
+    padding:3px 12px; border-radius:20px;
+    font-size:13px; font-weight:700; white-space:nowrap;
+    transition:.2s;
+  }
+  .timer.urgent{
+    background:#fdeef0; color:#e0393e; border-color:#f6c9cb;
+    animation:pulse .8s infinite;
+  }
+  @keyframes pulse{
+    0%,100%{opacity:1;}
+    50%{opacity:.5;}
+  }
+
+  .bar{height:8px; background:#eef1f8; border-radius:99px; overflow:hidden; margin-bottom:26px;}
+  .bar > div{height:100%; width:0; background:var(--primary); border-radius:99px; transition:width .25s;}
+  .ref-box{
+    background:#f5f8ff; border:1px dashed #d6e0f7; border-radius:12px;
+    padding:14px 16px; font-size:16px; color:#5a6684; line-height:1.8;
+    margin-bottom:20px;
+  }
+  .ref-box b{color:#3b6ef6; font-weight:700;}
+  .question-title{font-size:22px; line-height:1.7; margin:0 0 24px; font-weight:700;}
+  .answer-row{display:flex; align-items:center; gap:10px;}
+  .answer-row input{
+    flex:1 1 auto; min-width:0;
+    padding:15px 18px; font-size:22px; font-family:inherit; font-weight:600;
+    color:var(--text);
+    border:1.5px solid var(--border); border-radius:12px;
+    background:#fbfcff; outline:none; transition:.15s;
+  }
+  .answer-row input::placeholder{font-weight:400; color:#aab3c7;}
+  .answer-row input:focus{border-color:var(--primary); background:#f4f7ff;}
+  .answer-row input:disabled{background:#f2f4f9; color:#6b7794;}
+  .unit{flex:0 0 auto; font-size:18px; color:var(--muted); font-weight:600;}
+  .nav{display:flex; gap:12px; justify-content:flex-end; margin-top:26px;}
+
+  .choice-list{display:flex; flex-direction:column; gap:14px; margin-top:4px;}
+  .choice-btn{
+    text-align:left; padding:18px 20px; font-size:20px; line-height:1.6;
+    border-radius:14px; border:1.5px solid var(--border); background:#fbfcff;
+    cursor:pointer; transition:.15s; font-weight:500;
+  }
+  .choice-btn:hover:not(:disabled){border-color:#9db4f5; background:#f4f7ff;}
+  .choice-btn:disabled{opacity:.6; cursor:not-allowed;}
+
+  .q-result{
+    border-radius:16px; padding:22px; margin-top:4px;
+    border:1.5px solid var(--border); background:#fbfcff;
+  }
+  .q-result.ok{border-color:#bfe8ce; background:#f6fdf9;}
+  .q-result.no{border-color:#f6c9cb; background:#fff8f8;}
+  .q-result.perfect{border-color:#7bd3a0; background:#eefbf3;}
+  .q-result-head{
+    display:flex; align-items:center; gap:10px;
+    font-size:24px; font-weight:800; margin-bottom:16px;
+  }
+  .q-result.ok .q-result-head{color:var(--ok);}
+  .q-result.no .q-result-head{color:var(--no);}
+  .q-result.perfect .q-result-head{color:#0f9d58;}
+  .q-result-line{font-size:18px; color:var(--muted); line-height:2;}
+  .q-result-line b{color:var(--text); font-weight:700;}
+  .q-result-line .right{color:var(--ok); font-weight:800;}
+  .q-result-line .wrong{color:var(--no); font-weight:800;}
+  .q-result-tip{
+    margin-top:12px; font-size:16px; color:#c07a00;
+    background:#fffaf0; border-radius:8px; padding:10px 14px;
+  }
+  .q-result-explain{
+    margin-top:12px; font-size:16px; color:#6b7794;
+    background:#f5f8ff; border-radius:8px; padding:10px 14px; line-height:1.8;
+  }
+  .q-result-benchmark{
+    margin-top:12px; font-size:17px; color:#0f7a4a;
+    background:#eefbf3; border-radius:8px; padding:10px 14px; line-height:1.8;
+    border:1px solid #bfe8ce;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 开始页 -->
+  <section id="screen-start" class="card card-start">
+    <h1>环保减碳知多少</h1>
+
+    <div class="rules">
+      <div class="rule">
+        <div class="rule-label">参与规则</div>
+        <div class="rule-text">在有限的时间内答题闯关，题目由易到难，每次共 <b>3 道</b>（基础、进阶、挑战各 1 道），每通过一题记一分，可现场兑换礼品，先到先得，发完即止。</div>
+        <div class="rule-notice">注意注意！题目主要是带来减碳概念，无需纠结数字计算，大胆猜测即可。（现场易拉宝有部分提示，请仔细阅读噢）</div>
+      </div>
+      <div class="rule">
+        <div class="rule-label">通过标准</div>
+        <div class="rule-text">只要回答的答案在正确答案区间范围内，即为通过。</div>
+      </div>
+      <div class="rule">
+        <div class="rule-label">限时规则</div>
+        <div class="rule-text">每道题限时 <b>15 秒</b>，超时未作答默认未通过。</div>
+      </div>
+    </div>
+
+    <button id="btnStart" class="primary block">开始答题</button>
+  </section>
+
+  <!-- 答题页 -->
+  <section id="screen-quiz" class="card hidden">
+    <div class="quiz-head">
+      <span id="progressText">第 1 / 3 题</span>
+      <div class="quiz-head-right">
+        <span class="tag" id="categoryTag">类别</span>
+        <span class="timer" id="timerBox">⏱ <span id="timerText">15</span>s</span>
+      </div>
+    </div>
+    <div class="bar"><div id="barFill"></div></div>
+    <div id="refBox" class="ref-box"></div>
+    <h2 id="questionText" class="question-title"></h2>
+
+    <!-- 数值题答题区 -->
+    <div id="numberAnswerArea" class="hidden">
+      <div class="answer-row">
+        <input id="answerInput" type="text" inputmode="decimal" autocomplete="off" placeholder="请输入数值">
+        <span id="unitText" class="unit"></span>
+      </div>
+      <div class="nav">
+        <button id="btnSubmitNumber" class="primary">提交答案</button>
+      </div>
+    </div>
+
+    <!-- 选择题答题区 -->
+    <div id="choiceAnswerArea" class="hidden">
+      <div class="choice-list" id="choiceList"></div>
+    </div>
+
+    <!-- 单题结果区 -->
+    <div id="questionResult" class="q-result hidden">
+      <div class="q-result-head" id="resultHead"></div>
+      <div class="q-result-line" id="resultYourAnswer"></div>
+      <div class="q-result-line" id="resultRightAnswer"></div>
+      <div class="q-result-tip hidden" id="resultGap"></div>
+      <div class="q-result-benchmark hidden" id="resultBenchmark"></div>
+      <div class="q-result-explain hidden" id="resultExplain"></div>
+      <div class="nav" id="resultNav">
+        <button id="btnNextQuestion" class="primary">下一题</button>
+        <button id="btnBackHome">回到首页</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* =========================================================
+   基础题（选择题，22 道）
+   ========================================================= */
+const BASIC_QUESTIONS = [
+  { type:'choice', q:'北京到南京单程出行，哪一种交通方式碳排放更低？', options:['A. 高铁','B. 飞机'], answer:'A', explain:'飞机约 75kg CO₂，高铁约 21kg CO₂。' },
+  { type:'choice', q:'想要降低电器待机碳排放，优先选择？', options:['A. 智能插座断电','B. 普通插座长期通电'], answer:'A', explain:'智能插座可以切断待机供电，大幅降低待机排放。' },
+  { type:'choice', q:'购物时，对比一次性塑料袋，反复使用环保袋？', options:['A. 碳足迹更低','B. 碳足迹更高'], answer:'A', explain:'环保袋多次复用后，碳足迹优于一次性塑料袋。' },
+  { type:'choice', q:'食堂就餐，长期自带餐具对比一次性餐具，哪一个更低碳？', options:['A. 自带餐具','B. 一次性餐具'], answer:'A', explain:'一次性餐具生产、废弃处置全程产生碳排放。' },
+  { type:'choice', q:'办公打印，哪种方式碳排放更少？', options:['A. 双面打印','B. 单面打印'], answer:'A', explain:'双面打印节约纸张，造纸属于高耗能行业。' },
+  { type:'choice', q:'北京—南京单程，飞机的碳排放大约是高铁的几倍？', options:['A. 约 3 倍','B. 约 1.5 倍'], answer:'A', explain:'飞机约 75kg CO₂，高铁约 21kg CO₂，约为 3.5 倍。' },
+  { type:'choice', q:'环保袋需要怎么做，碳足迹才优于塑料袋？', options:['A. 多次重复使用','B. 只用一次'], answer:'A', explain:'单次使用环保袋碳排不一定占优，核心在于反复复用。' },
+  { type:'choice', q:'节约打印纸，节约的纸张数量越多，减碳量？', options:['A. 越高','B. 不变'], answer:'A', explain:'节约纸张直接减少木材、制浆能耗，省纸越多减碳越多。' },
+  { type:'choice', q:'长途出差：高铁二等座 VS 飞机经济舱（500km 航程），哪个碳足迹更低？', options:['A. 高铁','B. 飞机'], answer:'A', explain:'飞机高空辐射增温效应，同等距离碳排放显著高于高铁。' },
+  { type:'choice', q:'短途 3 公里出行：骑电动车 VS 步行，哪个综合碳足迹更低（包含电池生产损耗）？', options:['A. 步行','B. 电动车'], answer:'A', explain:'电动车电力、电池制造有前置碳；3km 短途步行零排放。' },
+  { type:'choice', q:'一头牛每天的碳排放，主要来自哪个环节？', options:['A. 打嗝','B. 放屁'], answer:'A', explain:'牛消化产生的甲烷主要通过打嗝排出，甲烷的增温效应远强于二氧化碳。' },
+  { type:'choice', q:'开灯 1 小时和用一个一次性纸杯，哪个碳排放更高？', options:['A. 开灯 1 小时','B. 一次性纸杯'], answer:'B', explain:'一次性纸杯从生产到废弃全程排碳，单只约 58 克，高于开灯 1 小时的约 41 克。' },
+  { type:'choice', q:'一件纯棉 T 恤“从种子到成衣”全生命周期碳排放大约是？', options:['A. 约 9 公斤','B. 约 1 公斤'], answer:'A', explain:'棉质服装全生命周期排碳约 9.18 公斤，其中种植、纺纱和制造是主要环节。' },
+  { type:'choice', q:'饮水机不用时断电，相比长期通电，每台每年大约减排多少？', options:['A. 约 351 公斤','B. 约 35 公斤'], answer:'A', explain:'饮水机近三分之二的用电量被浪费，闲置时断电每台每年约减排 351 公斤。' },
+  { type:'choice', q:'调低电脑屏幕亮度，每台台式机每年大约减排多少？', options:['A. 约 29 公斤','B. 约 2.9 公斤'], answer:'A', explain:'调低屏幕亮度每台台式机每年省电约 30 度，相应减排约 29 公斤。' },
+  { type:'choice', q:'我国“双碳”目标中，碳中和的目标年份是？', options:['A. 2060 年前','B. 2050 年前'], answer:'A', explain:'我国力争 2030 年前碳达峰、2060 年前碳中和。' },
+  { type:'choice', q:'同样质量的甲烷和二氧化碳，100 年内谁的增温效应更强？', options:['A. 甲烷','B. 二氧化碳'], answer:'A', explain:'同等质量甲烷 100 年内增温效应约为二氧化碳的 20 倍。' },
+  { type:'choice', q:'“碳达峰”是指什么？', options:['A. 碳排放达到峰值后逐步下降','B. 碳排放降为零'], answer:'A', explain:'碳达峰是碳排放由增转降的拐点，碳中和才是净零排放。' },
+  { type:'choice', q:'一个一次性塑料袋在自然环境中完全降解大约需要？', options:['A. 约 100 年','B. 约 10 年'], answer:'A', explain:'普通塑料难以自然降解，可在环境中存留上百年。' },
+  { type:'choice', q:'以下哪种食物生产过程的碳排放通常最高？', options:['A. 蔬菜','B. 牛肉'], answer:'B', explain:'牛羊等反刍动物养殖会产生大量甲烷，牛肉碳排高于多数植物性食物。' },
+  { type:'choice', q:'使用节能灯代替白炽灯，主要因为节能灯？', options:['A. 更亮','B. 耗电更少'], answer:'B', explain:'同样照度下，节能灯耗电远低于白炽灯。' },
+  { type:'choice', q:'办公室电脑设置“睡眠模式”而不是屏保，主要为了？', options:['A. 保护屏幕','B. 减少待机耗电'], answer:'B', explain:'睡眠模式可大幅降低电脑待机功耗，屏保并不能省电。' }
+];
+
+/* =========================================================
+   进阶题（20 道，带真值区间，部分带对标）
+   ========================================================= */
+const ADVANCED_QUESTIONS = [
+  { type:'number', difficulty:'进阶', q:'🛫北京 — 南京单程，选择高铁替代飞机大约可以减少多少 kg CO₂？', answer:54, min:45, max:65, unit:'kg' },
+  { type:'number', difficulty:'进阶', q:'🔌使用智能插座替代普通插座，降低电器待机排放，一年大约可以减少多少 kg CO₂？', answer:90, min:75, max:105, unit:'kg' },
+  { type:'number', difficulty:'进阶', q:'🛍️环保袋重复使用 100 次，对比每次使用新塑料袋，大约减少多少 kg CO₂？', answer:0.42, min:0.3, max:0.6, unit:'kg' },
+  { type:'number', difficulty:'进阶', q:'🍽️坚持自带餐具替代一次性餐具就餐，每人一年大约减少多少 kg CO₂？', answer:11, min:8, max:14, unit:'kg' },
+  { type:'number', difficulty:'进阶', q:'📃一年节约 10 包打印纸，采用双面打印替代单面打印，大约可以减少多少 kg CO₂？', answer:37.5, min:30, max:45, unit:'kg' },
+  { type:'number', difficulty:'进阶', q:'💧洗手涂泡沫随手关水，对比每次洗手持续长流水，一年累计大约减碳____kg CO₂？', answer:9, min:6, max:13, unit:'kg', benchmark:'≈节约 30 吨自来水' },
+  { type:'number', difficulty:'进阶', q:'🧺干净旧衣物回收再利用，每件纯棉上衣大约减少____kg CO₂排放？', answer:7, min:4, max:10, unit:'kg', benchmark:'≈开车 35 公里碳排放' },
+  { type:'number', difficulty:'进阶', q:'🧻回收 1 吨办公废纸，相比原木造纸，大约减碳____kg CO₂？', answer:1200, min:900, max:1500, unit:'kg', benchmark:'≈一辆家用车跑 6000 公里' },
+  { type:'number', difficulty:'进阶', q:'🔋长期充满电不拔手机充电器，一年空载损耗对应的碳排放大约____kg CO₂？', answer:4, min:2, max:6, unit:'kg', benchmark:'≈消耗 1.5 升汽油' },
+  { type:'number', difficulty:'进阶', q:'🥗坚持光盘，每周减少 2 次午餐食物浪费，一年大约减碳____kg CO₂？', answer:14, min:9, max:20, unit:'kg', benchmark:'≈种植、运输这份食物的全部排放' },
+  { type:'number', difficulty:'进阶', q:'🧴采购大桶补充装洗护用品，替代频繁买小瓶装，一年大约减碳____kg CO₂？', answer:6, min:3, max:9, unit:'kg', benchmark:'减少大量塑料瓶生产碳排放' },
+  { type:'number', difficulty:'进阶', q:'🧺积攒满桶再开洗衣机，对比少量衣物随时洗，一年单人洗衣大约减碳____kg CO₂？', answer:11, min:7, max:16, unit:'kg', benchmark:'≈节约 40 度电' },
+  { type:'number', difficulty:'进阶', q:'💡少开 1 周（168 小时）白炽灯，大约减少多少 kg CO₂？', answer:6.9, min:4, max:10, unit:'kg', benchmark:'≈手机充电 840 次' },
+  { type:'number', difficulty:'进阶', q:'📺少看 1 周（168 小时）电视，大约减少多少 kg CO₂？', answer:16.1, min:11, max:22, unit:'kg', benchmark:'≈手机充电 2000 次' },
+  { type:'number', difficulty:'进阶', q:'🚗少开车 100 公里，大约减少多少 kg CO₂？', answer:22, min:15, max:30, unit:'kg', benchmark:'≈少用 1 吨水' },
+  { type:'number', difficulty:'进阶', q:'🚇乘地铁代替开燃油车，行驶 100 公里大约减少多少 kg CO₂？', answer:9.2, min:6, max:13, unit:'kg', benchmark:'≈手机充电 1100 次' },
+  { type:'number', difficulty:'进阶', q:'☕一年自带咖啡杯买咖啡 200 次，大约减少多少 kg CO₂？', answer:10, min:6, max:14, unit:'kg', benchmark:'≈节约 15 度电' },
+  { type:'number', difficulty:'进阶', q:'👕少买 1 件不必要的衣服，大约减少多少 kg CO₂？', answer:6.4, min:4, max:9, unit:'kg', benchmark:'≈开车 29 公里' },
+  { type:'number', difficulty:'进阶', q:'🚿淋浴代替盆浴，每人每次大约减少多少 kg CO₂？', answer:8.1, min:5, max:12, unit:'kg', benchmark:'≈节约 12 度电' },
+  { type:'number', difficulty:'进阶', q:'🌳一棵树一年大约能吸收多少 kg 碳？', answer:270, min:200, max:350, unit:'kg', benchmark:'≈一辆车跑 1300 公里' }
+];
+
+/* =========================================================
+   挑战题（48 道，只给答案，单位 kg）
+   ========================================================= */
+const CHALLENGE_QUESTIONS = [
+  { type:'number', difficulty:'挑战', q:'北京—长沙，飞机单程 112 kg，高铁单程碳排放大概是多少 kg？', answer:32, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'北京—成都，飞机单程 141 kg，高铁单程碳排放大概是多少 kg？', answer:48, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'北京—广州，飞机单程 158 kg，高铁单程碳排放大概是多少 kg？', answer:47, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'北京—哈尔滨，飞机单程 87 kg，高铁单程碳排放大概是多少 kg？', answer:25, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'南京—长沙，飞机单程 73 kg，高铁单程碳排放大概是多少 kg？', answer:22, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'南京—成都，飞机单程 116 kg，高铁单程碳排放大概是多少 kg？', answer:34, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'南京—重庆，飞机单程 100 kg，高铁单程碳排放大概是多少 kg？', answer:28, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'南京—南宁，飞机单程 133 kg，高铁单程碳排放大概是多少 kg？', answer:38, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'上海—重庆，飞机单程 124 kg，高铁单程碳排放大概是多少 kg？', answer:35, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'上海—广州，飞机单程 108 kg，高铁单程碳排放大概是多少 kg？', answer:37, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'一台电视使用普通插座待机一年排放约 100 kg CO2，换成智能插座后，一年减少碳排放约多少 kg？', answer:90, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'两台电视使用普通插座待机一年，换成智能插座后，一年减少碳排放约多少 kg？', answer:180, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'一台机顶盒使用普通插座待机半年，换成智能插座后，半年减少碳排放约多少 kg？', answer:45, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'三台设备使用普通插座待机一年，换成智能插座后，一年减少碳排放约多少 kg？', answer:270, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'普通插座待机两年排放约 200 kg CO2，换成智能插座后，两年减少碳排放约多少 kg？', answer:180, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'一台电视普通插座待机一个季度（3 个月），换成智能插座后，一个季度减少碳排放约多少 kg？', answer:22.5, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'四台设备普通插座待机半年，换成智能插座后，半年减少碳排放约多少 kg？', answer:180, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'普通插座待机一年排放约 100 kg CO2，智能插座待机一年排放约 10 kg CO2，一年减少碳排放约多少 kg？', answer:90, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'五台设备普通插座待机一年，换成智能插座后，一年减少碳排放约多少 kg？', answer:450, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'一台设备普通插座待机三年，换成智能插座后，三年减少碳排放约多少 kg？', answer:270, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'一个家庭一年使用 3000 个一次性塑料袋，改用环保袋，一年减少碳排放约多少 kg？', answer:12.6, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'一个家庭一年使用 5000 个一次性塑料袋，改用环保袋，一年减少碳排放约多少 kg？', answer:21, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'一个办公室 20 人，每人每天使用 2 个塑料袋，一年按 250 个工作日计，改用环保袋，一年减少碳排放约多少 kg？', answer:42, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'一个家庭一年使用 4000 个一次性塑料袋，改用环保袋，一年减少碳排放约多少 kg？', answer:16.8, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'一个办公室 50 人，每人每天使用 2 个塑料袋，一年按 250 个工作日计，改用环保袋，一年减少碳排放约多少 kg？', answer:105, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'一个家庭两年共使用 6000 个一次性塑料袋，改用环保袋，两年减少碳排放约多少 kg？', answer:25.2, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'一个办公室 10 人，每人每天使用 3 个塑料袋，一年按 250 个工作日计，改用环保袋，一年减少碳排放约多少 kg？', answer:31.5, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'使用 2500 个一次性塑料袋，换成自带购物袋，减少碳排放约多少 kg？', answer:10.5, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'一栋 30 户居民楼，每户每年使用 3000 个一次性塑料袋，全部改用环保袋，一年减少碳排放约多少 kg？', answer:378, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'一个社区 100 户，每户每年使用 2000 个一次性塑料袋，全部改用环保袋，一年减少碳排放约多少 kg？', answer:840, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'一个人一年养成“无需餐具”习惯，减少碳排放约多少 kg？', answer:11, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'两个人一年养成“无需餐具”习惯，减少碳排放约多少 kg？', answer:22, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'一个人两年养成“无需餐具”习惯，减少碳排放约多少 kg？', answer:22, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'五个人一年养成“无需餐具”习惯，减少碳排放约多少 kg？', answer:55, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'十个人一年养成“无需餐具”习惯，减少碳排放约多少 kg？', answer:110, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'三个人两年养成“无需餐具”习惯，减少碳排放约多少 kg？', answer:66, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'一个人三年养成“无需餐具”习惯，减少碳排放约多少 kg？', answer:33, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'四个人半年养成“无需餐具”习惯，减少碳排放约多少 kg？', answer:22, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'二十个人一年养成“无需餐具”习惯，减少碳排放约多少 kg？', answer:220, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'某办公室节约 4 包 A4 纸，双面打印比单面打印减少碳排放约多少 kg？', answer:15, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'节约 10 包 A4 纸，双面打印比单面打印减少碳排放约多少 kg？', answer:37.5, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'节约 6 包 A4 纸，双面打印比单面打印减少碳排放约多少 kg？', answer:22.5, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'节约 8 包 A4 纸，双面打印比单面打印减少碳排放约多少 kg？', answer:30, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'节约 20 包 A4 纸，双面打印比单面打印减少碳排放约多少 kg？', answer:75, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'节约 12 包 A4 纸，双面打印比单面打印减少碳排放约多少 kg？', answer:45, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'节约 16 包 A4 纸，双面打印比单面打印减少碳排放约多少 kg？', answer:60, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'节约 5 包 A4 纸，双面打印比单面打印减少碳排放约多少 kg？', answer:18.75, unit:'kg' },
+  { type:'number', difficulty:'挑战', q:'节约 25 包 A4 纸，双面打印比单面打印减少碳排放约多少 kg？', answer:93.75, unit:'kg' }
+];
+
+/* ================= 工具函数 ================= */
+const $ = id => document.getElementById(id);
+const TIME_LIMIT = 15;
+
+function shuffle(arr){
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+function parseNumeric(value){
+  if (typeof value === 'number') return value;
+  if (value === null || value === undefined) return NaN;
+  const s = String(value).trim().replace(/[,，\s]/g, '');
+  if (!s) return NaN;
+  const m = s.match(/-?\d+(\.\d+)?/);
+  return m ? parseFloat(m[0]) : NaN;
+}
+function fmtNum(n){
+  const num = Number(n);
+  if (!Number.isFinite(num)) return '—';
+  return Number(num.toFixed(2)).toString();
+}
+function toleranceOf(ans){
+  const a = Math.abs(ans);
+  if (a < 10) return 0.2;
+  if (a <= 99) return 3;
+  if (a <= 999) return 35;
+  return 350;
+}
+function isNumberCorrect(q, value){
+  const num = parseNumeric(value);
+  if (!Number.isFinite(num)) return false;
+  if (q.min !== undefined && q.max !== undefined) {
+    return num >= q.min - 1e-9 && num <= q.max + 1e-9;
+  }
+  return Math.abs(num - q.answer) <= toleranceOf(q.answer) + 1e-9;
+}
+function isNumberExact(q, value){
+  const num = parseNumeric(value);
+  if (!Number.isFinite(num)) return false;
+  return Math.abs(num - q.answer) < 1e-9;
+}
+function gapOf(q, value){
+  const num = parseNumeric(value);
+  if (!Number.isFinite(num)) return null;
+  if (q.min !== undefined && q.max !== undefined) {
+    if (num < q.min) return q.min - num;
+    if (num > q.max) return num - q.max;
+    return 0;
+  }
+  const tol = toleranceOf(q.answer);
+  const low = q.answer - tol, high = q.answer + tol;
+  if (num < low) return low - num;
+  if (num > high) return high - num;
+  return 0;
+}
+function esc(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ================= 状态 ================= */
+let quiz = [];
+let current = 0;
+let answered = false;
+let timerId = null;
+let remaining = TIME_LIMIT;
+
+/* ================= 倒计时 ================= */
+function updateTimerDisplay(){
+  $('timerText').textContent = remaining;
+  const box = $('timerBox');
+  if (remaining <= 5) box.classList.add('urgent');
+  else box.classList.remove('urgent');
+}
+function stopTimer(){
+  if (timerId !== null) {
+    clearInterval(timerId);
+    timerId = null;
+  }
+}
+function startTimer(){
+  stopTimer();
+  remaining = TIME_LIMIT;
+  updateTimerDisplay();
+  timerId = setInterval(() => {
+    remaining--;
+    if (remaining <= 0) {
+      remaining = 0;
+      updateTimerDisplay();
+      stopTimer();
+      timeUp();
+    } else {
+      updateTimerDisplay();
+    }
+  }, 1000);
+}
+
+/* =========================================================
+   洗牌袋抽题：保证每道题在一轮内均匀出现
+   ========================================================= */
+const bags = { basic: [], advanced: [], challenge: [] };
+const lastPicked = { basic: null, advanced: null, challenge: null };
+
+function drawFromBag(key, list){
+  if (bags[key].length === 0){
+    bags[key] = shuffle(list.slice());
+    if (list.length > 1 && lastPicked[key] !== null){
+      const lastIdx = bags[key].length - 1;
+      if (bags[key][lastIdx] === lastPicked[key]){
+        [bags[key][0], bags[key][lastIdx]] = [bags[key][lastIdx], bags[key][0]];
+      }
+    }
+  }
+  const q = bags[key].pop();
+  lastPicked[key] = q;
+  return q;
+}
+
+function pickQuestions(){
+  const basic = drawFromBag('basic', BASIC_QUESTIONS);
+  const advanced = drawFromBag('advanced', ADVANCED_QUESTIONS);
+  const challenge = drawFromBag('challenge', CHALLENGE_QUESTIONS);
+  return [
+    Object.assign({}, basic, { type:'choice', difficulty:'基础' }),
+    advanced,
+    challenge
+  ];
+}
+
+/* ================= 页面切换 ================= */
+function show(name){
+  ['start', 'quiz'].forEach(n => {
+    $('screen-' + n).classList.toggle('hidden', n !== name);
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ================= 渲染题目 ================= */
+function renderQuestion(){
+  stopTimer();
+  const q = quiz[current];
+  answered = false;
+
+  $('progressText').textContent = `第 ${current + 1} / ${quiz.length} 题`;
+  $('categoryTag').textContent = q.difficulty;
+  $('barFill').style.width = ((current + 1) / quiz.length * 100) + '%';
+
+  $('refBox').style.display = 'none';
+  $('refBox').innerHTML = '';
+
+  $('questionText').textContent = q.q;
+
+  if (q.type === 'choice') {
+    $('numberAnswerArea').classList.add('hidden');
+    $('choiceAnswerArea').classList.remove('hidden');
+    renderChoices(q);
+  } else {
+    $('choiceAnswerArea').classList.add('hidden');
+    $('numberAnswerArea').classList.remove('hidden');
+    $('answerInput').value = '';
+    $('answerInput').disabled = false;
+    $('unitText').textContent = q.unit || '';
+    $('answerInput').focus();
+  }
+
+  $('questionResult').classList.add('hidden');
+  startTimer();
+}
+
+/* 渲染选择题 */
+function renderChoices(q){
+  const box = $('choiceList');
+  box.innerHTML = '';
+  q.options.forEach((opt, idx) => {
+    const letter = String.fromCharCode(65 + idx);
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.textContent = opt;
+    btn.dataset.letter = letter;
+    btn.addEventListener('click', () => submitChoice(letter));
+    box.appendChild(btn);
+  });
+}
+
+/* 选择题提交 */
+function submitChoice(letter){
+  if (answered) return;
+  answered = true;
+  stopTimer();
+
+  const q = quiz[current];
+  const ok = letter === q.answer;
+
+  document.querySelectorAll('.choice-btn').forEach(btn => {
+    btn.disabled = true;
+    if (btn.dataset.letter === q.answer) {
+      btn.style.borderColor = '#18a058';
+      btn.style.background = '#f6fdf9';
+    } else if (btn.dataset.letter === letter && !ok) {
+      btn.style.borderColor = '#e0393e';
+      btn.style.background = '#fff8f8';
+    }
+  });
+
+  showResult({
+    ok,
+    exact: ok,
+    yourText: letter,
+    rightText: q.answer,
+    unit: '',
+    gap: null,
+    q
+  });
+}
+
+/* 数值题提交 */
+function submitNumber(){
+  if (answered) return;
+  const raw = $('answerInput').value.trim();
+  if (raw === '') { $('answerInput').focus(); return; }
+  answered = true;
+  stopTimer();
+
+  const q = quiz[current];
+  const ok = isNumberCorrect(q, raw);
+  const exact = isNumberExact(q, raw);
+  const gap = ok ? null : gapOf(q, raw);
+
+  $('answerInput').disabled = true;
+  $('numberAnswerArea').classList.add('hidden');
+
+  showResult({
+    ok,
+    exact,
+    yourText: raw,
+    rightText: buildRightText(q),
+    unit: q.unit || '',
+    gap,
+    q
+  });
+}
+
+/* 构建正确答案显示文本 */
+function buildRightText(q){
+  if (q.min !== undefined && q.max !== undefined) {
+    return `${fmtNum(q.answer)} ${q.unit || ''}（区间 ${fmtNum(q.min)}–${fmtNum(q.max)} ${q.unit || ''}）`;
+  }
+  return `${fmtNum(q.answer)} ${q.unit || ''}`;
+}
+
+/* 超时处理 */
+function timeUp(){
+  if (answered) return;
+  answered = true;
+  stopTimer();
+
+  const q = quiz[current];
+
+  if (q.type === 'choice') {
+    document.querySelectorAll('.choice-btn').forEach(btn => {
+      btn.disabled = true;
+      if (btn.dataset.letter === q.answer) {
+        btn.style.borderColor = '#18a058';
+        btn.style.background = '#f6fdf9';
+      }
+    });
+    showResult({
+      ok: false,
+      exact: false,
+      yourText: '未作答',
+      rightText: q.answer,
+      unit: '',
+      gap: null,
+      q
+    });
+  } else {
+    $('answerInput').disabled = true;
+    $('numberAnswerArea').classList.add('hidden');
+    showResult({
+      ok: false,
+      exact: false,
+      yourText: '未作答',
+      rightText: buildRightText(q),
+      unit: q.unit || '',
+      gap: null,
+      q
+    });
+  }
+}
+
+/* 显示单题结果 */
+function showResult({ ok, exact, yourText, rightText, unit, gap, q }){
+  const resultEl = $('questionResult');
+  resultEl.className = 'q-result ' + (exact ? 'perfect' : (ok ? 'ok' : 'no'));
+
+  $('resultHead').textContent = exact ? '🎉 完全正确，太棒了！' : (ok ? '✅ 通过' : '❌ 未通过');
+
+  const yourClass = ok ? 'right' : 'wrong';
+  $('resultYourAnswer').innerHTML =
+    `你的答案：<b class="${yourClass}">${esc(yourText)}</b> ${esc(unit)}`;
+
+  $('resultRightAnswer').innerHTML =
+    `正确答案：<b class="right">${esc(rightText)}</b>`;
+
+  if (!ok && gap !== null) {
+    $('resultGap').classList.remove('hidden');
+    $('resultGap').textContent = `距答案区间还差 ${fmtNum(gap)} ${unit}`;
+  } else {
+    $('resultGap').classList.add('hidden');
+  }
+
+  if (q.benchmark) {
+    $('resultBenchmark').classList.remove('hidden');
+    $('resultBenchmark').innerHTML = `<b>对标：</b>${esc(q.benchmark)}`;
+  } else {
+    $('resultBenchmark').classList.add('hidden');
+  }
+
+  if (q.explain) {
+    $('resultExplain').classList.remove('hidden');
+    $('resultExplain').innerHTML = `<b>科普：</b>${esc(q.explain)}`;
+  } else {
+    $('resultExplain').classList.add('hidden');
+  }
+
+  const isLast = current === quiz.length - 1;
+  $('btnNextQuestion').classList.toggle('hidden', isLast);
+
+  $('questionResult').classList.remove('hidden');
+}
+
+/* 下一题 */
+function nextQuestion(){
+  if (current < quiz.length - 1) {
+    current++;
+    renderQuestion();
+  }
+}
+
+/* 回到首页 */
+function backHome(){
+  stopTimer();
+  show('start');
+}
+
+/* ================= 初始化 ================= */
+(function init(){
+  $('btnStart').addEventListener('click', () => {
+    quiz = pickQuestions();
+    current = 0;
+    show('quiz');
+    renderQuestion();
+  });
+
+  $('btnSubmitNumber').addEventListener('click', submitNumber);
+  $('answerInput').addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return;
+    e.preventDefault();
+    submitNumber();
+  });
+
+  $('btnNextQuestion').addEventListener('click', nextQuestion);
+  $('btnBackHome').addEventListener('click', backHome);
+})();
+</script>
+</body>
+</html>
